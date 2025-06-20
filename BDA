@@ -1,0 +1,120 @@
+A. Matrix Multiplication:
+
+a) Map Reduce
+
+from functools import reduce
+A = [[1, 2], [3, 4]]
+B = [[5, 6], [7, 8]]
+B_T = list(zip(*B))
+result = [[reduce(lambda x, y: x + y, map(lambda x: x[0] * x[1], zip(row_a, col_b))) for col_b in B_T] for row_a in A]
+for row in result:
+	print(row)
+
+b) PySpark
+
+from pyspark import SparkContext
+sc = SparkContext.getOrCreate()
+A = sc.parallelize([([1, 2],), ([3, 4],)])
+B = sc.parallelize([([5, 6],), ([7, 8],)])
+B_T = list(zip(*[b[0] for b in B.collect()]))
+result = A.map(lambda a: [sum(x*y for x, y in zip(a[0], col)) for col in B_T]).collect()
+for row in result:
+	print(row)
+
+
+B. Word Count
+
+from functools import reduce
+from collections import defaultdict
+with open("file.txt") as f:
+    words = f.read().split()
+mapped = list(map(lambda w: (w, 1), words))
+reduced = reduce(lambda acc, x: acc.update({x[0]: acc.get(x[0], 0) + x[1]}) or acc, mapped, defaultdict(int))
+for word, count in reduced.items():
+    print(f"{word}: {count}")
+
+
+C. Web Scrape
+
+import requests
+from bs4 import BeautifulSoup
+url = 'https://example.com'
+soup = BeautifulSoup(requests.get(url).text, 'html.parser')
+text_parts = soup.get_text(separator=' ', strip=True).split()
+links = [a['href'] for a in soup.find_all('a', href=True)]
+data = {f'text_{i+1}': word for i, word in enumerate(text_parts)}
+data.update({f'link_{i+1}': href for i, href in enumerate(links)})
+for k, v in data.items():
+    print(f"{k}: {v}")
+
+D. HDFS
+
+1. List all contents in HDFS
+hdfs dfs -ls /
+
+2. Create a directory
+hdfs dfs -mkdir /your_directory_name
+
+3. Remove a directory (recursively)
+hdfs dfs -rm -r /your_directory_name
+
+4. Create an empty file
+hdfs dfs -touchz /your_file_name.txt
+
+5. Delete an empty file
+hdfs dfs -rm /your_file_name.txt
+
+6. Copy a file from local system to HDFS
+hdfs dfs -put /local/path/file.txt /hdfs/path/
+
+7. Copy a file from HDFS to local system
+hdfs dfs -get /hdfs/path/file.txt /local/path/
+
+8. Copy a file from directory A to B in HDFS
+hdfs dfs -cp /hdfs/dirA/file.txt /hdfs/dirB/
+
+9. Move a file from A to B in HDFS
+hdfs dfs -mv /hdfs/dirA/file.txt /hdfs/dirB/
+
+10. Read contents of a file in HDFS
+hdfs dfs -cat /hdfs/path/file.txt
+
+11. Leave safemode
+hdfs dfsadmin -safemode leave
+
+
+E. PIG
+
+example: an file at the location: /user/hadoop/employees.csv
+contains data: 
+101,John,Sales,5000
+102,Alice,IT,7000
+103,Bob,Sales,4500
+104,Carol,HR,5500
+105,David,IT,6000
+
+
+# 1. Launch Pig in MapReduce mode
+pig -x mapreduce
+
+2. Load data from HDFS
+employees = LOAD '/user/hadoop/employees.csv' 
+USING PigStorage(',') 
+AS (id:int, name:chararray, dept:chararray, salary:int);
+
+3. Filter employees with salary > 5000
+high_paid = FILTER employees BY salary > 5000;
+
+4. Group employees by department
+grouped = GROUP employees BY dept;
+
+5. Calculate average salary by department
+avg_salary = FOREACH grouped GENERATE group AS department, AVG(employees.salary) AS avg_sal;
+
+6. Display results on console
+DUMP avg_salary;
+
+7. Store high-paid employees in HDFS
+STORE high_paid INTO '/user/hadoop/high_paid_employees' 
+USING PigStorage(',');
+

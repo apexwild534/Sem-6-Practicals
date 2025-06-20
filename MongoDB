@@ -1,1 +1,91 @@
+// 1. Show all databases
+show dbs
+
+// 2. Create or switch to a database
+use myDatabase
+
+// 3. Create a collection
+db.createCollection("myCollection")
+
+// 4. Insert a document (dataset)
+db.myCollection.insertOne({ name: "Alice", age: 25, dept: "IT", score: 85 })
+
+// 5. Print all documents with pretty formatting
+db.myCollection.find().pretty()
+
+// 6. Filter where score > 80
+db.myCollection.find({ score: { $gt: 80 } })
+
+// 7. Filter where score >= 80
+db.myCollection.find({ score: { $gte: 80 } })
+
+// 8. Filter where score < 80
+db.myCollection.find({ score: { $lt: 80 } })
+
+// 9. Filter where score <= 80
+db.myCollection.find({ score: { $lte: 80 } })
+
+// 10. Filter where dept is in a list
+db.myCollection.find({ dept: { $in: ["IT", "HR"] } })
+
+// 11. Filter where dept is not in a list
+db.myCollection.find({ dept: { $nin: ["Sales", "Admin"] } })
+
+// 12. Filter where age is not equal to 30
+db.myCollection.find({ age: { $ne: 30 } })
+
+// 13. AND condition: age > 25 AND dept is "IT"
+db.myCollection.find({ $and: [ { age: { $gt: 25 } }, { dept: "IT" } ] })
+
+// 14. OR condition: age < 25 OR dept is "HR"
+db.myCollection.find({ $or: [ { age: { $lt: 25 } }, { dept: "HR" } ] })
+
+// 15. NOT condition: NOT (age > 30)
+db.myCollection.find({ age: { $not: { $gt: 30 } } })
+
+// 16. Display fields a, b, c, d and exclude _id
+db.myCollection.find({}, { a: 1, b: 1, c: 1, d: 1, _id: 0 })
+
+// 17. age > x AND age < y (e.g., between 20 and 30)
+db.myCollection.find({ age: { $gt: 20, $lt: 30 } })
+
+// 18. Sort by age ascending
+db.myCollection.find().sort({ age: 1 })
+
+// 19. Check if field "email" exists
+db.myCollection.find({ email: { $exists: true } })
+
+// 20. Filter documents where "score" is of type double (type 1)
+db.myCollection.find({ score: { $type: 1 } })
+
+// 21. Filter where score % 5 == 0
+db.myCollection.find({ score: { $mod: [5, 0] } })
+
+// 22. Regex: find name starting with 'A'
+db.myCollection.find({ name: { $regex: /^A/ } })
+
+// 23. Display a, b, c, d where last characters of d are "ad"
+db.myCollection.find({ d: { $regex: /ad$/ } }, { a: 1, b: 1, c: 1, d: 1, _id: 0 })
+
+// 24. Create user with readWrite role on myDatabase
+db.createUser({
+  user: "newUser",
+  pwd: "securePassword",
+  roles: [ { role: "readWrite", db: "myDatabase" } ]
+})
+
+// 25. List all users in the current database
+db.getUsers()
+
+// 26. Grant existing user additional roles
+db.grantRolesToUser("newUser", [ { role: "dbAdmin", db: "myDatabase" } ])
+
+// 27. Revoke a specific role from a user
+db.revokeRolesFromUser("newUser", [ { role: "dbAdmin", db: "myDatabase" } ])
+
+// 28. Change password of an existing user
+db.changeUserPassword("newUser", "newSecurePassword")
+
+// 29. Delete a user
+db.dropUser("newUser")
 

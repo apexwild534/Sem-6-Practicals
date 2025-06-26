@@ -1,15 +1,18 @@
 1. Perceptron algorithm for binary classification
 
-def linear_regression(X, y, lr=0.01, epochs=1000):
-    w, b = 0, 0
-    n = len(y)
+import numpy as np
+
+def perceptron(x,y,lr=0.1,epochs=10):
+    w=np.zeros(x.shape[1])
+    b=0
     for _ in range(epochs):
-        y_pred = w * X + b
-        dw = (-2/n) * sum(X * (y - y_pred))
-        db = (-2/n) * sum(y - y_pred)
-        w -= lr * dw
-        b -= lr * db
-    return w, b
+        for  xi, yi in zip(x,y):
+            z=np.dot(xi,w)+b
+	    y_pred = 1 if z>0 else 0
+	    error = yi - y_pred
+	    w+ = lr * error *xi
+	    b+ = lr * error
+   return w,b
 
 2. Linear Regression using Gradient Descent
 
@@ -28,6 +31,7 @@ def linear_regression(X, y, lr=0.01, epochs=1000):
 
 from keras.models import Sequential
 from keras.layers import Dense
+
 model = Sequential()
 model.add(Dense(10, input_dim=2, activation='relu'))
 model.add(Dense(1, activation='sigmoid'))
@@ -73,7 +77,7 @@ def logistic_regression(X, y, lr=0.1, epochs=1000):
         b += lr * sum(error)
     return w, b
 
-6. K-Nearest Neighbors (KNN) algorithm for classification
+6. KNN for classification
 
 from collections import Counter
 import numpy as np
@@ -122,6 +126,7 @@ def k_means(X, k, epochs=100):
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
+
 vectorizer = CountVectorizer()
 X = vectorizer.fit_transform(text_data)
 model = MultinomialNB()
@@ -131,6 +136,7 @@ model.fit(X, y_labels)
 
 from keras.models import Sequential
 from keras.layers import SimpleRNN, Dense
+
 model = Sequential([SimpleRNN(50, activation='tanh', input_shape=(10, 1)), Dense(1)])
 model.compile(optimizer='adam', loss='mse')
 model.fit(X_train, y_train, epochs=10)

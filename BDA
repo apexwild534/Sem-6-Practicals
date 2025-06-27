@@ -85,7 +85,7 @@ hdfs dfsadmin -safemode leave
 
 E. PIG
 
-example: an file at the location: /user/hadoop/employees.csv
+example: an file at the location: /employees.csv   (IN HDFS)
 contains data: 
 101,John,Sales,5000
 102,Alice,IT,7000
@@ -98,7 +98,7 @@ contains data:
 pig -x mapreduce
 
 2. Load data from HDFS
-employees = LOAD '/user/hadoop/employees.csv' 
+employees = LOAD '/test/employees.csv' 
 USING PigStorage(',') 
 AS (id:int, name:chararray, dept:chararray, salary:int);
 
@@ -115,6 +115,11 @@ avg_salary = FOREACH grouped GENERATE group AS department, AVG(employees.salary)
 DUMP avg_salary;
 
 7. Store high-paid employees in HDFS
-STORE high_paid INTO '/user/hadoop/high_paid_employees' 
+STORE high_paid INTO '/test/high_paid_employees' 
 USING PigStorage(',');
 
+8. To exit grunt shell
+Ctrl + d
+
+9. Display Contents:
+hdfs dfs -cat /test/high_paid_employees/part-m-0000   (or any other file related to part) 
